@@ -6,11 +6,13 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     //components
+    private AudioSource playerAudioSource;
     private Rigidbody playerRigidbody;
 
     //internal (serialized) variables
     [SerializeField] private float mainThrust = 5.0f;
     [SerializeField] private float rotationThrust = 5.0f;
+    [SerializeField] private float maxAngularVelocity = 1.5f;
     [SerializeField] [Tooltip ("maximum upward velocity (m/s)")] private float maxVelocity = 5.0f;
 
     private bool isThrusting = false;
@@ -18,8 +20,9 @@ public class Movement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        playerAudioSource = GetComponent<AudioSource>();
         playerRigidbody = GetComponent<Rigidbody>();
-        playerRigidbody.maxAngularVelocity = 1.5f;
+        playerRigidbody.maxAngularVelocity = maxAngularVelocity;
     }
 
     // Update is called once per frame
@@ -51,9 +54,19 @@ public class Movement : MonoBehaviour
             //applies thrust relative to local coordinates 
             //playerRigidbody.AddRelativeForce(thrustForce, ForceMode.Impulse);
             playerRigidbody.AddRelativeForce(Vector3.up * mainThrust, ForceMode.Impulse);
+
+            if (!playerAudioSource.isPlaying) 
+            {
+                playerAudioSource.Play();
+            }
+            
             isThrusting = false;
             //playerRigidbody.AddRelativeForce(thrustForce);  
             //Debug.Log("Apply thrust.");
+        }
+        else if(playerAudioSource.isPlaying)
+        {
+            playerAudioSource.Stop();
         }
         
         //playerRigidbody.velocity = Vector3.ClampMagnitude(playerRigidbody.velocity, maxVelocity);
