@@ -15,7 +15,10 @@ public class Movement : MonoBehaviour
     [SerializeField] private float maxAngularVelocity = 1.5f;
     [SerializeField] [Tooltip ("maximum upward velocity (m/s)")] private float maxVelocity = 5.0f;
 
+    [SerializeField] private AudioClip mainEngineSound;
+
     private bool isThrusting = false;
+    private bool isRotationAllowed = false;
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +36,10 @@ public class Movement : MonoBehaviour
             isThrusting = true;
         }
 
+        //if (transform.rotation.z <= 25.0f && transform.rotation.z >= -25.0f)
+        //{
+        //    isRotationAllowed = true;
+        //}
         //ProcessRotation();
     }
 
@@ -57,7 +64,7 @@ public class Movement : MonoBehaviour
 
             if (!playerAudioSource.isPlaying) 
             {
-                playerAudioSource.Play();
+                playerAudioSource.PlayOneShot(mainEngineSound);
             }
             
             isThrusting = false;
@@ -77,6 +84,7 @@ public class Movement : MonoBehaviour
         //}
     }
 
+    //need to figure out how to prevent rotation going beyond certain degrees
     private void ProcessTorque()
     {
         if (Input.GetKey(KeyCode.A))
@@ -89,6 +97,8 @@ public class Movement : MonoBehaviour
             //Debug.Log("Swinging Right");
             playerRigidbody.AddRelativeTorque(Vector3.back * rotationThrust, ForceMode.Force);
         }
+
+       
     }
 
 
